@@ -1,8 +1,11 @@
 package com.example.apodwallpaper.data.network.dto
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
-data class ImageDTO(
+@Parcelize
+data class ImageDTO (
     @SerializedName("title")
     val title : String,
     @SerializedName("url")
@@ -10,6 +13,10 @@ data class ImageDTO(
     @SerializedName("explanation")
     val explanation : String,
     @SerializedName("date")
-    val date : String
-) {
+    val date : String,
+    @SerializedName("media_type")
+    val mediaType : String,
+    @SerializedName("hdurl")
+    val hdurl : String
+) : Parcelable {
 }

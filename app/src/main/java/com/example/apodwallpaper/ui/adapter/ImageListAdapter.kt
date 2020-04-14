@@ -37,6 +37,7 @@ class ImageListAdapter(private val glideRequestManager: RequestManager) : Recycl
         notifyDataSetChanged()
     }
 
+
 }
 
 public class ImageViewHolder(itemView : View, private val imageLoader: RequestManager) : RecyclerView.ViewHolder(itemView){
@@ -66,6 +67,7 @@ public class ImageViewHolder(itemView : View, private val imageLoader: RequestMa
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
+
                         progressBar.visibility = View.GONE
                         return false
                     }
