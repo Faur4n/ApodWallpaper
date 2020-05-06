@@ -41,6 +41,7 @@ ext.versionRetrofit = '2.4.0'
 ext.versionOkHttpLogingInterceptor = '3.6.0'
 ext.versionGlide = "4.11.0"
 ext.versionMoxy = "2.1.2"
+ext.permissonDispatcher = "4.7.0"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -72,12 +73,16 @@ dependencies {
     implementation "com.android.support:support-v4:$versionAppCompat"
     implementation "com.android.support:cardview-v7:$versionAppCompat"
 
-
+    //MOXY
     implementation "com.github.moxy-community:moxy:$versionMoxy"
     kapt "com.github.moxy-community:moxy-compiler:$versionMoxy"
     implementation "com.github.moxy-community:moxy-android:$versionMoxy"
     implementation "com.github.moxy-community:moxy-ktx:$versionMoxy"
     implementation "com.github.moxy-community:moxy-app-compat:$versionMoxy"
+
+    //Permission dispatcher
+    implementation "org.permissionsdispatcher:permissionsdispatcher:$permissonDispatcher"
+    kapt "org.permissionsdispatcher:permissionsdispatcher-processor:$permissonDispatcher"
 
 
 }

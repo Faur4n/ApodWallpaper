@@ -32,6 +32,9 @@ import com.example.apodwallpaper.data.network.dto.ImageDTO
 import kotlinx.android.synthetic.main.fragment_details.*
 import kotlinx.android.synthetic.main.fragment_details.view.*
 import moxy.MvpAppCompatFragment
+import permissions.dispatcher.NeedsPermission
+import permissions.dispatcher.OnPermissionDenied
+import permissions.dispatcher.RuntimePermissions
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
@@ -48,6 +51,8 @@ private const val ARG_PARAM2 = "param2"
  * Use the [DetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+
+@RuntimePermissions
 class DetailsFragment : MvpAppCompatFragment() {
     private var image: ImageDTO? = null
 
@@ -55,10 +60,9 @@ class DetailsFragment : MvpAppCompatFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        retainInstance = true
         arguments?.let {
             image = it.getParcelable<ImageDTO>(ARG_PARAM1)
-
-
         }
 
     }
@@ -86,18 +90,35 @@ class DetailsFragment : MvpAppCompatFragment() {
         val setWallpaperButton = view.button
 
         setWallpaperButton.setOnClickListener {
-            //setWallpaper(image!!.hdurl)
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
 
-            val uri = bitmap?.let { it1 -> getImageUri(activity!!.applicationContext, it1) };
-            val intent = Intent(Intent.ACTION_ATTACH_DATA)
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            intent.setDataAndType(uri,"image/jpeg")
-            intent.putExtra("mimeType", "image/jpeg")
-            startActivity(Intent.createChooser(intent, "Set as:"));
+            //if has permisson
+            setWallpaperWithPermissionCheck()
         }
 
         return view
+    }
+
+    @NeedsPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun setWallpaper(){
+        val uri = bitmap?.let { it1 -> getImageUri(activity!!.applicationContext, it1) };
+        val intent = Intent(Intent.ACTION_ATTACH_DATA)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.setDataAndType(uri,"image/jpeg")
+        intent.putExtra("mimeType", "image/jpeg")
+        startActivity(Intent.createChooser(intent, "Set as:"));
+    }
+    @OnPermissionDenied(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun permissionDenied(){
+        Toast.makeText(context,"permissionDenied",Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        onRequestPermissionsResult(requestCode,grantResults)
     }
 
 
@@ -109,34 +130,36 @@ class DetailsFragment : MvpAppCompatFragment() {
     }
 
     private fun loadImage(view : View){
-        Glide.with(context!!).asBitmap().load(image!!.url)
-            .listener(object : RequestListener<Bitmap?> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any,
-                    target: Target<Bitmap?>,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    view.progressBar.visibility = View.GONE
-                    return false
-                }
+        context?.let {
+            Glide.with(it).asBitmap().load(image!!.url)
+                .listener(object : RequestListener<Bitmap?> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any,
+                        target: Target<Bitmap?>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        view.progressBar.visibility = View.GONE
+                        return false
+                    }
 
-                override fun onResourceReady(
-                    resource: Bitmap?,
-                    model: Any?,
-                    target: Target<Bitmap?>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    view.progressBar.visibility = View.GONE
-                    view.button.visibility = View.VISIBLE
-                    bitmap = resource
-                    return false
-                }
-            })
-            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
-            //.thumbnail(0.2f)
-            .into(view.hd_image)
+                    override fun onResourceReady(
+                        resource: Bitmap?,
+                        model: Any?,
+                        target: Target<Bitmap?>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        view.progressBar.visibility = View.GONE
+                        view.button.visibility = View.VISIBLE
+                        bitmap = resource
+                        return false
+                    }
+                })
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                //.thumbnail(0.2f)
+                .into(view.hd_image)
+        }
 
     }
 

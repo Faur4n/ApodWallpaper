@@ -33,7 +33,7 @@ object RestAPI{
     }
 
     private fun buildClient(): OkHttpClient {
-        val interceptor = HttpLoggingInterceptor()
+        val interceptor =  HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
 
         return OkHttpClient.Builder()

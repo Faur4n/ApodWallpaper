@@ -26,11 +26,14 @@ class ImagePresenter(instance: RestAPI) : BasePresenter<ImageView>() {
         showImagesOfCurrentMonth()
     }
 
+
+
     public fun showImagesOfCurrentMonth(){
         val calendar =  Calendar.getInstance(Locale.getDefault())
-        val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val maxDay = Calendar.getInstance(Locale.getDefault())[Calendar.DATE]
         val MONTH_YEAR_DISPLAY_PATTERN = "yyyy-MM-dd"
-        val format = SimpleDateFormat(MONTH_YEAR_DISPLAY_PATTERN, Locale.getDefault());
+        val format = SimpleDateFormat(MONTH_YEAR_DISPLAY_PATTERN, Locale.getDefault())
+
         for(i in 1..maxDay){
             calendar.set(Calendar.DATE,i)
             val date = format.format(calendar.time)
@@ -42,8 +45,17 @@ class ImagePresenter(instance: RestAPI) : BasePresenter<ImageView>() {
 
     public fun showImagesByDate(year: Int, monthOfYear: Int){
         val calendar = DateDisplayUtils.formatMonthYear(year, monthOfYear)
-        val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val builder = StringBuilder()
+        val currentCalendar = Calendar.getInstance(Locale.getDefault())
+        val maxDay =
+            if(calendar.get(Calendar.YEAR) == currentCalendar.get(Calendar.YEAR)
+                &&
+                calendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH)
+            ){
+                currentCalendar.get(Calendar.DATE)
+            }else{
+                calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+            }
+
         val MONTH_YEAR_DISPLAY_PATTERN = "yyyy-MM-dd"
         val format = SimpleDateFormat(MONTH_YEAR_DISPLAY_PATTERN, Locale.getDefault())
 

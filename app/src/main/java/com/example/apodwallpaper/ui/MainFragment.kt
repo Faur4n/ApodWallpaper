@@ -1,12 +1,9 @@
 package com.example.apodwallpaper.ui
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.apodwallpaper.R
@@ -17,15 +14,12 @@ import com.example.apodwallpaper.imagelist.mvp.ImagePresenter
 import com.example.apodwallpaper.imagelist.mvp.ImageView
 import com.example.apodwallpaper.ui.adapter.ImageListAdapter
 import com.example.apodwallpaper.ui.adapter.RecyclerItemClickListener
-import com.example.apodwallpaper.utils.DateDisplayUtils
 import com.example.apodwallpaper.widget.SimpleDatePickerDialog
 import com.example.apodwallpaper.widget.SimpleDatePickerDialogFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
-import java.lang.StringBuilder
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MainFragment : MvpAppCompatFragment(), ImageView, SimpleDatePickerDialog.OnDateSetListener {
@@ -33,10 +27,11 @@ class MainFragment : MvpAppCompatFragment(), ImageView, SimpleDatePickerDialog.O
     private val presenter by moxyPresenter { ImagePresenter(RestAPI) }
 
     private var imageListAdapter: ImageListAdapter? = null
-    private val images = arrayListOf<ImageDTO>()
+    private val images = sortedSetOf<ImageDTO>(compareByDescending {it.date})
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        retainInstance = true
     }
 
     override fun onCreateView(
@@ -69,7 +64,7 @@ class MainFragment : MvpAppCompatFragment(), ImageView, SimpleDatePickerDialog.O
                     RecyclerItemClickListener.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
                         activity!!.supportFragmentManager.beginTransaction()
-                            .replace(R.id.frame_layout,DetailsFragment.newInstance(images[position]))
+                            .replace(R.id.frame_layout,DetailsFragment.newInstance(images.toTypedArray()[position]))
                             .addToBackStack("Frag1")
                             .commit()
                     }
@@ -104,7 +99,7 @@ class MainFragment : MvpAppCompatFragment(), ImageView, SimpleDatePickerDialog.O
 
     override fun showData(image: ImageDTO) {
         images.add(image)
-        imageListAdapter!!.replaceImages(images)
+        imageListAdapter!!.replaceImages(images.toTypedArray())
     }
 
     override fun showState(state: State) {

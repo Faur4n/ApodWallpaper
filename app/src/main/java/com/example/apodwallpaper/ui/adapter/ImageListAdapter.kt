@@ -31,7 +31,7 @@ class ImageListAdapter(private val glideRequestManager: RequestManager) : Recycl
         holder.bindImage(image)
     }
 
-    fun replaceImages(images : ArrayList<ImageDTO>){
+    fun replaceImages(images: Array<ImageDTO>){
         imageList.clear()
         imageList.addAll(images)
         notifyDataSetChanged()
