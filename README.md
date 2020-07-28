@@ -1,4 +1,11 @@
 # ApodWallpaper
-TestWallpaperApp
+## Wallpaper app with live updated collection of NASA Picture of the day
 
-Simple two screen app to display list of apod images and set wallpaper using Moxy(MVP), Retrofit, RxJava. 
+* Moxy(MVP)
+* Kotlin
+* RxJava
+* Retrofit
+* Glide
+
+
+![screenshot](https://faur4n.github.io/images/project-2.png)
